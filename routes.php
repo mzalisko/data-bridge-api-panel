@@ -27,3 +27,24 @@ $router->get('/api/v1/ping', static function (): void {
         'message' => 'DataBridgeApi is running.',
     ]);
 });
+
+// -------------------------------------------------------------------------
+// Auth routes
+// -------------------------------------------------------------------------
+
+$router->get('/login', [\App\Auth\LoginController::class, 'showForm']);
+$router->post('/login', [\App\Auth\LoginController::class, 'handleLogin']);
+$router->get('/logout', [\App\Auth\LoginController::class, 'logout']);
+
+// -------------------------------------------------------------------------
+// Root redirect
+// -------------------------------------------------------------------------
+
+$router->get('/', static function (): void {
+    if (\App\Auth\AuthGuard::isLoggedIn()) {
+        header('Location: /dashboard');
+    } else {
+        header('Location: /login');
+    }
+    exit;
+});

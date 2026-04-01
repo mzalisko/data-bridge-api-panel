@@ -52,7 +52,14 @@ class Router
 
         // Exact match first
         if (isset($this->routes[$method][$uri])) {
-            call_user_func($this->routes[$method][$uri]);
+            $handler = $this->routes[$method][$uri];
+
+            // Auto-instantiate [ClassName, 'method'] arrays
+            if (is_array($handler) && is_string($handler[0])) {
+                $handler = [new $handler[0](), $handler[1]];
+            }
+
+            call_user_func($handler);
             return;
         }
 
