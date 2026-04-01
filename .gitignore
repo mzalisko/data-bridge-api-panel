@@ -1,0 +1,35 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Logs (content, not dir)
+logs/*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# PHP vendor
+vendor/
+composer.lock
+
+# Database dumps
+*.sql
+*.sqlite
+
+# Uploads / cache
+public/uploads/
+storage/
+cache/
+tmp/
+
+# Claude internal
+.claude/
