@@ -98,7 +98,7 @@ HTML;
                 $href    = htmlspecialchars($item['route'], ENT_QUOTES, 'UTF-8');
                 $label   = htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8');
                 $icon    = self::icon($item['icon']);
-                $counter = isset($item['count'])
+                $counter = (isset($item['count']) && $item['count'] > 0)
                     ? '<span class="sidebar-nav__count">' . (int) $item['count'] . '</span>'
                     : '';
 
