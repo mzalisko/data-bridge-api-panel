@@ -114,6 +114,9 @@
   --color-border:        var(--border);
   --color-text:          var(--text-primary);
   --color-text-muted:    var(--text-muted);
+  --dot-ok:              #34D399;
+  --dot-pause:           #FCD34D;
+  --dot-off:             #F87171;
 }
 
 /* --------------------------------------------------------------------------
