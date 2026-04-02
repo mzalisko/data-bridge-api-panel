@@ -8,8 +8,9 @@ namespace App\Core;
  * Minimal HTTP router.
  *
  * Supports GET and POST route registration. Routes are matched against
- * REQUEST_URI with query string stripped. Placeholders are not supported
- * in this base version — extend as needed.
+ * REQUEST_URI with query string stripped.
+ * Placeholders are supported using {name} syntax (e.g. /sites/{id}/update).
+ * Matched params are passed as array<string,string> to the handler callable.
  *
  * Usage:
  *   $router->get('/api/v1/ping', [MyController::class, 'ping']);
@@ -24,8 +25,8 @@ class Router
     /**
      * Register a GET route.
      *
-     * @param string   $path    URI path (e.g. '/api/v1/ping')
-     * @param callable $handler Any callable — closure or [class, method]
+     * @param string         $path    URI path, supports {name} placeholders
+     * @param callable|array $handler Any callable — closure or [class, method]
      */
     public function get(string $path, callable|array $handler): void
     {
@@ -34,6 +35,9 @@ class Router
 
     /**
      * Register a POST route.
+     *
+     * @param string         $path    URI path, supports {name} placeholders
+     * @param callable|array $handler Any callable — closure or [class, method]
      */
     public function post(string $path, callable|array $handler): void
     {
@@ -64,6 +68,9 @@ class Router
         // Pattern match — supports {name} placeholders (e.g. /sites/{id}/update)
         if (isset($this->routes[$method])) {
             foreach ($this->routes[$method] as $pattern => $handler) {
+                if (!str_contains($pattern, '{')) {
+                    continue;
+                }
                 $regex = preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $pattern);
                 $regex = '@^' . $regex . '$@';
                 if (preg_match($regex, $uri, $matches)) {
@@ -79,6 +86,9 @@ class Router
 
         // Check if URI matches any other method → 405
         foreach ($this->routes as $registeredMethod => $paths) {
+            if ($registeredMethod === $method) {
+                continue; // already tried this method above
+            }
             foreach ($paths as $pattern => $unused) {
                 $regex = preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $pattern);
                 $regex = '@^' . $regex . '$@';
