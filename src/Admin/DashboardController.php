@@ -113,6 +113,9 @@ class DashboardController
         $connOk    = (int) $stats['conn_ok'];
         $connPause = (int) $stats['conn_pause'];
         $connOff   = (int) $stats['conn_off'];
+        $totalSites  = (int) $stats['sites'];
+        $totalGroups = (int) $stats['groups'];
+        $totalKeys   = (int) $stats['api_keys'];
 
         $sitesTrend  = htmlspecialchars((string) $stats['sites_trend'],  ENT_QUOTES, 'UTF-8');
         $groupsTrend = htmlspecialchars((string) $stats['groups_trend'], ENT_QUOTES, 'UTF-8');
@@ -126,7 +129,7 @@ class DashboardController
             <span class="stat-card__icon">{$sitesIcon}</span>
         </div>
         <div class="stat-card__body">
-            <div class="stat-card__value">{$stats['sites']}</div>
+            <div class="stat-card__value">{$totalSites}</div>
             <div class="stat-card__trend">↑ {$sitesTrend}</div>
         </div>
     </div>
@@ -137,7 +140,7 @@ class DashboardController
             <span class="stat-card__icon">{$groupsIcon}</span>
         </div>
         <div class="stat-card__body">
-            <div class="stat-card__value">{$stats['groups']}</div>
+            <div class="stat-card__value">{$totalGroups}</div>
             <div class="stat-card__trend">↑ {$groupsTrend}</div>
         </div>
     </div>
@@ -148,7 +151,7 @@ class DashboardController
             <span class="stat-card__icon">{$keysIcon}</span>
         </div>
         <div class="stat-card__body">
-            <div class="stat-card__value">{$stats['api_keys']}</div>
+            <div class="stat-card__value">{$totalKeys}</div>
             <div class="stat-card__trend stat-card__trend--neutral">Без змін</div>
         </div>
     </div>
@@ -208,8 +211,10 @@ HTML;
 
             $cards = '';
             foreach ($sites as $site) {
-                $conn       = $site['conn'];
-                $badgeClass = 'conn-badge--' . htmlspecialchars($conn, ENT_QUOTES, 'UTF-8');
+                $conn        = $site['conn'];
+                $allowedConn = ['ok', 'pause', 'off'];
+                $connSafe    = in_array($conn, $allowedConn, true) ? $conn : 'off';
+                $badgeClass  = 'conn-badge--' . $connSafe;
                 $badgeLabel = htmlspecialchars($connLabels[$conn] ?? 'Невідомо', ENT_QUOTES, 'UTF-8');
                 $name       = htmlspecialchars($site['name'],    ENT_QUOTES, 'UTF-8');
                 $domain     = htmlspecialchars($site['domain'],  ENT_QUOTES, 'UTF-8');
