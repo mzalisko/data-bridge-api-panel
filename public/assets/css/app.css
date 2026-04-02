@@ -681,3 +681,276 @@ a:hover {
   gap: 14px;
   background: var(--bg-page);
 }
+
+/* ==========================================================================
+   STAT CARDS — Format Y (Scorecard)
+   ========================================================================== */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+.stat-card__head {
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.stat-card__label {
+  font-size: 9px;
+  font-weight: var(--font-weight-black);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.stat-card__icon { color: var(--text-disabled); }
+.stat-card__body { padding: 10px 12px 12px; }
+.stat-card__value {
+  font-size: 26px;
+  font-weight: var(--font-weight-black);
+  color: var(--text-primary);
+  line-height: 1;
+}
+.stat-card__trend {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--trend-up);
+  margin-top: 4px;
+}
+.stat-card__trend--neutral { color: var(--text-muted); }
+
+/* Connection breakdown card (4th stat card) */
+.conn-breakdown { display: flex; flex-direction: column; gap: 5px; }
+.conn-breakdown__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.conn-breakdown__label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.conn-breakdown__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.conn-breakdown__count {
+  font-size: 11px;
+  font-weight: var(--font-weight-black);
+}
+.conn-breakdown__count--ok    { color: var(--conn-ok-text); }
+.conn-breakdown__count--pause { color: var(--conn-pause-text); }
+.conn-breakdown__count--off   { color: var(--conn-off-text); }
+
+/* ==========================================================================
+   CONNECTION STATUS BADGE
+   ========================================================================== */
+.conn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  padding: 2px 7px;
+}
+.conn-badge--ok    { background: var(--conn-ok-bg);    color: var(--conn-ok-text); }
+.conn-badge--pause { background: var(--conn-pause-bg); color: var(--conn-pause-text); }
+.conn-badge--off   { background: var(--conn-off-bg);   color: var(--conn-off-text); }
+
+/* ==========================================================================
+   KANBAN BOARD
+   ========================================================================== */
+
+/* Board toolbar */
+.kanban-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.kanban-toolbar__title {
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+}
+.kanban-toolbar__count {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.kanban-toolbar__spacer { flex: 1; }
+.kanban-filter-btn {
+  font-size: 10px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+
+/* Board scroll container */
+.kanban-board {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  align-items: flex-start;
+}
+
+/* Column */
+.kanban-col {
+  flex-shrink: 0;
+  width: 230px;
+  background: var(--bg-table-head);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+.kanban-col__header {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.kanban-col__name {
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  flex: 1;
+}
+.kanban-col__badge {
+  font-size: 9px;
+  font-weight: var(--font-weight-black);
+  background: var(--accent-count-bg);
+  color: var(--accent-count-text);
+  padding: 1px 5px;
+}
+.kanban-col__cards {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Site card */
+.site-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+.site-card__summary {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.site-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-card__name {
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+.site-card__domain {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.site-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.site-card__apikey {
+  font-size: 9px;
+  color: var(--text-muted);
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+.site-card__copy-btn {
+  background: var(--bg-table-head);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  font-size: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+.site-card__copy-btn:hover { color: var(--text-primary); }
+
+/* Expand chevron */
+.site-card__chevron {
+  color: var(--text-disabled);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.site-card.is-open .site-card__chevron { transform: rotate(180deg); }
+
+/* Dropdown details */
+.site-card__details {
+  display: none;
+  border-top: 1px solid var(--border-subtle);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.site-card:not(.is-open) .site-card__details { display: none; }
+.site-card.is-open .site-card__details { display: flex; }
+
+.site-card__detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.site-card__detail-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.site-card__detail-value {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+}
+.site-card__actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 4px;
+}
+.site-card__action-btn {
+  flex: 1;
+  padding: 4px;
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  background: var(--bg-table-head);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: var(--font-family);
+  color: var(--text-secondary);
+  text-align: center;
+  text-decoration: none;
+}
+.site-card__action-btn:hover { background: var(--bg-row-hover); color: var(--text-primary); }
+.site-card__action-btn--primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.site-card__action-btn--primary:hover { opacity: 0.9; }
