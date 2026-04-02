@@ -903,7 +903,6 @@ a:hover {
 
 /* Dropdown details */
 .site-card__details {
-  display: none;
   border-top: 1px solid var(--border-subtle);
   padding: 8px 10px;
   display: flex;
