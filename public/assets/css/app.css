@@ -714,7 +714,7 @@ a:hover {
 .stat-card__icon { color: var(--text-disabled); }
 .stat-card__body { padding: 10px 12px 12px; }
 .stat-card__value {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: var(--font-weight-black);
   color: var(--text-primary);
   line-height: 1;
@@ -813,7 +813,7 @@ a:hover {
 /* Column */
 .kanban-col {
   flex-shrink: 0;
-  width: 230px;
+  width: 280px;
   background: var(--bg-table-head);
   border: 1px solid var(--border);
   display: flex;
@@ -840,10 +840,10 @@ a:hover {
   padding: 1px 5px;
 }
 .kanban-col__cards {
-  padding: 6px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
 }
 
 /* Site card */
@@ -853,10 +853,10 @@ a:hover {
   cursor: pointer;
 }
 .site-card__summary {
-  padding: 8px 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 .site-card__top {
   display: flex;
@@ -864,7 +864,7 @@ a:hover {
   justify-content: space-between;
 }
 .site-card__name {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
 }
