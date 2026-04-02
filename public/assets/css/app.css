@@ -1,46 +1,65 @@
 /* ==========================================================================
-   DataBridgeApi — Base Design System
-   All spacing/colors/typography via CSS variables (Style-Guide.md)
+   DataBridgeApi — Design System
+   Palette: Light + Dark RYFEN-style (Palette-Light-Dark.md)
+   border-radius: 0 everywhere
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   1. CSS Variables
-   -------------------------------------------------------------------------- */
+/* ── Light theme (default) ── */
 :root {
-  /* Primary */
-  --color-primary:       #7c3aed;
-  --color-primary-hover: #6d28d9;
-  --color-primary-light: #ede9fe;
+  --bg-page:            #F9FAFB;
+  --bg-sidebar:         #FFFFFF;
+  --bg-topbar:          #FFFFFF;
+  --bg-card:            #FFFFFF;
+  --bg-table-head:      #F9FAFB;
+  --bg-row-hover:       #FAFAFA;
+  --bg-nav-hover:       #F9FAFB;
+  --bg-nav-active:      #EFF6FF;
+  --border:             #E5E7EB;
+  --border-subtle:      #F3F4F6;
+  --text-primary:       #111827;
+  --text-secondary:     #374151;
+  --text-muted:         #9CA3AF;
+  --text-disabled:      #D1D5DB;
+  --accent:             #0EA5E9;
+  --accent-text:        #1D4ED8;
+  --accent-count-bg:    #DBEAFE;
+  --accent-count-text:  #1D4ED8;
+  --conn-ok-text:       #065F46;
+  --conn-ok-bg:         #D1FAE5;
+  --conn-pause-text:    #92400E;
+  --conn-pause-bg:      #FEF3C7;
+  --conn-off-text:      #991B1B;
+  --conn-off-bg:        #FEE2E2;
+  --dot-ok:             #10B981;
+  --dot-pause:          #F59E0B;
+  --dot-off:            #EF4444;
+  --trend-up:           #10B981;
 
-  /* Neutral */
-  --color-bg:            #f9fafb;
-  --color-surface:       #ffffff;
-  --color-border:        #e5e7eb;
-  --color-text:          #111827;
-  --color-text-muted:    #6b7280;
-
-  /* Status */
+  /* Legacy aliases — login page */
+  --color-primary:       var(--accent);
+  --color-primary-hover: #0284C7;
+  --color-primary-light: #EFF6FF;
+  --color-bg:            var(--bg-page);
+  --color-surface:       var(--bg-card);
+  --color-border:        var(--border);
+  --color-text:          var(--text-primary);
+  --color-text-muted:    var(--text-muted);
   --color-success:       #059669;
-  --color-warning:       #d97706;
-  --color-danger:        #dc2626;
-  --color-info:          #2563eb;
-
-  /* Sidebar */
-  --color-sidebar-bg:    #1e1b4b;
-  --color-sidebar-text:  #c4b5fd;
-  --color-sidebar-active:#7c3aed;
+  --color-warning:       #D97706;
+  --color-danger:        #DC2626;
+  --color-info:          #2563EB;
 
   /* Typography */
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-size-xs:   0.75rem;
-  --font-size-sm:   0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg:   1.125rem;
-  --font-size-xl:   1.25rem;
-  --font-size-2xl:  1.5rem;
+  --font-size-xs:   0.6875rem; /* 11px */
+  --font-size-sm:   0.75rem;   /* 12px */
+  --font-size-base: 0.875rem;  /* 14px */
+  --font-size-lg:   1rem;      /* 16px */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
+  --font-weight-semibold: 600;
   --font-weight-bold:   700;
+  --font-weight-black:  800;
 
   /* Spacing */
   --space-1:  0.25rem;
@@ -51,11 +70,50 @@
   --space-8:  2rem;
   --space-12: 3rem;
 
-  /* Radius */
-  --radius-sm:   4px;
-  --radius-md:   8px;
-  --radius-lg:   12px;
-  --radius-full: 9999px;
+  /* Border radius: 0 everywhere */
+  --radius-sm:   0;
+  --radius-md:   0;
+  --radius-lg:   0;
+  --radius-full: 0;
+}
+
+/* ── Dark theme ── */
+[data-theme="dark"] {
+  --bg-page:            #0C1117;
+  --bg-sidebar:         #141921;
+  --bg-topbar:          #141921;
+  --bg-card:            #161D27;
+  --bg-table-head:      #1A2130;
+  --bg-row-hover:       #1A2130;
+  --bg-nav-hover:       #1A2130;
+  --bg-nav-active:      #0C2340;
+  --border:             #1E2837;
+  --border-subtle:      #1A2130;
+  --text-primary:       #F1F5F9;
+  --text-secondary:     #94A3B8;
+  --text-muted:         #4B5563;
+  --text-disabled:      #2D3748;
+  --accent:             #0EA5E9;
+  --accent-text:        #7DD3FC;
+  --accent-count-bg:    #0C2340;
+  --accent-count-text:  #38BDF8;
+  --conn-ok-text:       #34D399;
+  --conn-ok-bg:         #052E16;
+  --conn-pause-text:    #FCD34D;
+  --conn-pause-bg:      #2D1E00;
+  --conn-off-text:      #F87171;
+  --conn-off-bg:        #2D0A0A;
+  --trend-up:           #34D399;
+
+  /* Legacy aliases — login page dark */
+  --color-primary:       var(--accent);
+  --color-primary-hover: #0284C7;
+  --color-primary-light: #0C2340;
+  --color-bg:            var(--bg-page);
+  --color-surface:       var(--bg-card);
+  --color-border:        var(--border);
+  --color-text:          var(--text-primary);
+  --color-text-muted:    var(--text-muted);
 }
 
 /* --------------------------------------------------------------------------
@@ -279,4 +337,294 @@ a:hover {
 
 .login-form .btn--primary {
   margin-top: var(--space-2);
+}
+
+/* --------------------------------------------------------------------------
+   7. Admin layout — sidebar + main
+   -------------------------------------------------------------------------- */
+.admin-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: 1fr;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  background-color: var(--color-sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-decoration: none;
+}
+
+.sidebar-logo__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  flex-shrink: 0;
+}
+
+.sidebar-logo__name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4) 0;
+  flex: 1;
+}
+
+.sidebar-nav__section {
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: rgba(196, 181, 253, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sidebar-nav__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-sidebar-text);
+  text-decoration: none;
+  border-radius: 0;
+  transition: background-color 0.1s ease, color 0.1s ease;
+  margin: 1px var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.sidebar-nav__item:hover {
+  background-color: rgba(255,255,255,0.06);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.sidebar-nav__item.is-active {
+  background-color: var(--color-sidebar-active);
+  color: #ffffff;
+}
+
+.sidebar-nav__icon {
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.sidebar-footer {
+  padding: var(--space-4);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.sidebar-user__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+.sidebar-user__info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar-user__name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user__role {
+  font-size: var(--font-size-xs);
+  color: var(--color-sidebar-text);
+}
+
+.sidebar-user__logout {
+  font-size: var(--font-size-xs);
+  color: var(--color-sidebar-text);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: color 0.1s ease;
+}
+
+.sidebar-user__logout:hover {
+  color: var(--color-danger);
+  text-decoration: none;
+}
+
+/* Main area */
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-8);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  min-height: 60px;
+}
+
+.topbar-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.topbar-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.admin-content {
+  flex: 1;
+  padding: var(--space-8);
+}
+
+/* --------------------------------------------------------------------------
+   8. Cards / Panels
+   -------------------------------------------------------------------------- */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.card__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+/* --------------------------------------------------------------------------
+   9. Tables
+   -------------------------------------------------------------------------- */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.table th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background-color: var(--color-bg);
+}
+
+/* --------------------------------------------------------------------------
+   10. Badges
+   -------------------------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.badge--success {
+  background-color: #d1fae5;
+  color: var(--color-success);
+}
+
+.badge--warning {
+  background-color: #fef3c7;
+  color: var(--color-warning);
+}
+
+.badge--danger {
+  background-color: #fee2e2;
+  color: var(--color-danger);
+}
+
+.badge--info {
+  background-color: #dbeafe;
+  color: var(--color-info);
+}
+
+.badge--neutral {
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
 }
