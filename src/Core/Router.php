@@ -18,7 +18,7 @@ namespace App\Core;
  */
 class Router
 {
-    /** @var array<string, array<string, callable>> */
+    /** @var array<string, array<string, callable|array>> */
     private array $routes = [];
 
     /**
@@ -27,7 +27,7 @@ class Router
      * @param string   $path    URI path (e.g. '/api/v1/ping')
      * @param callable $handler Any callable — closure or [class, method]
      */
-    public function get(string $path, callable $handler): void
+    public function get(string $path, callable|array $handler): void
     {
         $this->routes['GET'][$path] = $handler;
     }
@@ -35,13 +35,14 @@ class Router
     /**
      * Register a POST route.
      */
-    public function post(string $path, callable $handler): void
+    public function post(string $path, callable|array $handler): void
     {
         $this->routes['POST'][$path] = $handler;
     }
 
     /**
      * Dispatch the current request to the matching route handler.
+     * Supports parameterized routes with {name} placeholders.
      * Responds with 404 or 405 JSON if no match is found.
      */
     public function dispatch(): void
@@ -53,27 +54,44 @@ class Router
         // Exact match first
         if (isset($this->routes[$method][$uri])) {
             $handler = $this->routes[$method][$uri];
-
-            // Auto-instantiate [ClassName, 'method'] arrays
             if (is_array($handler) && is_string($handler[0])) {
                 $handler = [new $handler[0](), $handler[1]];
             }
-
             call_user_func($handler);
             return;
         }
 
-        // Check if the URI exists under a different method → 405
+        // Pattern match — supports {name} placeholders (e.g. /sites/{id}/update)
+        if (isset($this->routes[$method])) {
+            foreach ($this->routes[$method] as $pattern => $handler) {
+                $regex = preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $pattern);
+                $regex = '@^' . $regex . '$@';
+                if (preg_match($regex, $uri, $matches)) {
+                    $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                    if (is_array($handler) && is_string($handler[0])) {
+                        $handler = [new $handler[0](), $handler[1]];
+                    }
+                    call_user_func($handler, $params);
+                    return;
+                }
+            }
+        }
+
+        // Check if URI matches any other method → 405
         foreach ($this->routes as $registeredMethod => $paths) {
-            if (isset($paths[$uri])) {
-                http_response_code(405);
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'status'  => 'error',
-                    'data'    => null,
-                    'message' => 'Method not allowed.',
-                ]);
-                return;
+            foreach ($paths as $pattern => $unused) {
+                $regex = preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $pattern);
+                $regex = '@^' . $regex . '$@';
+                if ($pattern === $uri || preg_match($regex, $uri)) {
+                    http_response_code(405);
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'status'  => 'error',
+                        'data'    => null,
+                        'message' => 'Method not allowed.',
+                    ]);
+                    return;
+                }
             }
         }
 
