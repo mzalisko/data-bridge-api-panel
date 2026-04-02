@@ -68,6 +68,8 @@ class Router
         // Pattern match — supports {name} placeholders (e.g. /sites/{id}/update)
         if (isset($this->routes[$method])) {
             foreach ($this->routes[$method] as $pattern => $handler) {
+                // Safe to skip — literal routes were already ruled out by the
+                // isset() exact-match check above; only test placeholder patterns.
                 if (!str_contains($pattern, '{')) {
                     continue;
                 }
