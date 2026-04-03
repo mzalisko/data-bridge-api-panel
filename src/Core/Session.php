@@ -107,15 +107,6 @@ class Session
     }
 
     /**
-     * Remove a session key.
-     */
-    public static function remove(string $key): void
-    {
-        static::assertStarted();
-        unset($_SESSION[$key]);
-    }
-
-    /**
      * Destroy the session entirely (logout).
      */
     public static function destroy(): void

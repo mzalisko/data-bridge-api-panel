@@ -39,7 +39,7 @@ class LoginController
         $token  = CSRF::getToken();
 
         // Clear flash error after reading
-        Session::remove('login_error');
+        Session::forget('login_error');
 
         $this->renderLoginPage($token, (string) $error, $locked);
     }
@@ -167,8 +167,8 @@ class LoginController
 
     private function clearFailedAttempts(): void
     {
-        Session::remove('login_attempts');
-        Session::remove('login_last_attempt');
+        Session::forget('login_attempts');
+        Session::forget('login_last_attempt');
     }
 
     private function getIp(): string

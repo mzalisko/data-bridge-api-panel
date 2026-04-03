@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Admin;
 
 use App\Auth\AuthGuard;
+use App\Core\CSRF;
 use App\Core\Database;
 use App\Core\Layout;
 use App\Core\Session;
@@ -41,7 +42,8 @@ class SiteGroupsController
             if ($flash) echo '<div class="flash-error">' . htmlspecialchars($flash, ENT_QUOTES, 'UTF-8') . '</div>';
             echo self::renderToolbar(0, 0);
             echo self::renderKanbanBoard([], []);
-            echo self::renderModals([]);
+            echo '<meta name="_csrf" id="csrf-token" content="' . htmlspecialchars(CSRF::getToken(), ENT_QUOTES, 'UTF-8') . '">';
+            echo self::renderModals([], CSRF::getToken());
             echo '<script src="/assets/js/site-groups.js"></script>';
             Layout::end();
             return;
@@ -75,7 +77,8 @@ class SiteGroupsController
         }
         echo self::renderToolbar(count($groups), $totalSites);
         echo self::renderKanbanBoard($groups, $sitesByGroup);
-        echo self::renderModals($groups);
+        echo '<meta name="_csrf" id="csrf-token" content="' . htmlspecialchars(CSRF::getToken(), ENT_QUOTES, 'UTF-8') . '">';
+        echo self::renderModals($groups, CSRF::getToken());
         echo '<script src="/assets/js/site-groups.js"></script>';
         Layout::end();
     }
@@ -88,11 +91,23 @@ class SiteGroupsController
     {
         AuthGuard::require();
 
+        if (!CSRF::validate($_POST['_csrf'] ?? '')) {
+            Session::set('flash_error', 'Недійсний токен безпеки. Спробуйте ще раз.');
+            header('Location: /site-groups');
+            exit;
+        }
+
         $name = trim((string) ($_POST['name'] ?? ''));
         $desc = trim((string) ($_POST['description'] ?? ''));
 
         if ($name === '') {
             Session::set('flash_error', 'Назва групи є обов\'язковою.');
+            header('Location: /site-groups');
+            exit;
+        }
+
+        if (strlen($name) > 150) {
+            Session::set('flash_error', 'Назва групи не може перевищувати 150 символів.');
             header('Location: /site-groups');
             exit;
         }
@@ -124,8 +139,15 @@ class SiteGroupsController
     {
         AuthGuard::require();
 
+        if (!CSRF::validate($_POST['_csrf'] ?? '')) {
+            Session::set('flash_error', 'Недійсний токен безпеки. Спробуйте ще раз.');
+            header('Location: /site-groups');
+            exit;
+        }
+
         $id   = (int) ($params['id'] ?? 0);
         $name = trim((string) ($_POST['name'] ?? ''));
+        $desc = trim((string) ($_POST['description'] ?? ''));
 
         if ($id <= 0 || $name === '') {
             Session::set('flash_error', 'Невірні дані для оновлення групи.');
@@ -133,10 +155,16 @@ class SiteGroupsController
             exit;
         }
 
+        if (strlen($name) > 150) {
+            Session::set('flash_error', 'Назва групи не може перевищувати 150 символів.');
+            header('Location: /site-groups');
+            exit;
+        }
+
         $pdo = Database::getInstance()->getConnection();
         try {
-            $stmt = $pdo->prepare('UPDATE site_groups SET name = ? WHERE id = ?');
-            $stmt->execute([$name, $id]);
+            $stmt = $pdo->prepare('UPDATE site_groups SET name = ?, description = ? WHERE id = ?');
+            $stmt->execute([$name, $desc ?: null, $id]);
         } catch (PDOException $e) {
             error_log('SiteGroupsController::updateGroup — ' . $e->getMessage());
             Session::set('flash_error', 'Помилка при оновленні групи.');
@@ -150,6 +178,12 @@ class SiteGroupsController
     public function deleteGroup(array $params): void
     {
         AuthGuard::require();
+
+        if (!CSRF::validate($_POST['_csrf'] ?? '')) {
+            Session::set('flash_error', 'Недійсний токен безпеки. Спробуйте ще раз.');
+            header('Location: /site-groups');
+            exit;
+        }
 
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
@@ -180,6 +214,12 @@ class SiteGroupsController
     {
         AuthGuard::require();
 
+        if (!CSRF::validate($_POST['_csrf'] ?? '')) {
+            Session::set('flash_error', 'Недійсний токен безпеки. Спробуйте ще раз.');
+            header('Location: /site-groups');
+            exit;
+        }
+
         $name    = trim((string) ($_POST['name']     ?? ''));
         $url     = trim((string) ($_POST['url']      ?? ''));
         $groupId = (int) ($_POST['group_id'] ?? 0);
@@ -187,6 +227,12 @@ class SiteGroupsController
 
         if ($name === '' || $url === '' || $groupId <= 0) {
             Session::set('flash_error', 'Назва, URL та група є обов\'язковими.');
+            header('Location: /site-groups');
+            exit;
+        }
+
+        if (strlen($name) > 150) {
+            Session::set('flash_error', 'Назва сайту не може перевищувати 150 символів.');
             header('Location: /site-groups');
             exit;
         }
@@ -212,6 +258,8 @@ class SiteGroupsController
             $stmt->execute([$groupId, $name, $url]);
             $siteId = (int) $pdo->lastInsertId();
 
+            // NOTE: key_hash stores the raw key (not a hash) in this MVP.
+            // TODO: store only a SHA-256 hash here; show plain key once at creation.
             $stmt = $pdo->prepare(
                 'INSERT INTO api_keys (site_id, key_hash, is_active) VALUES (?, ?, 1)'
             );
@@ -233,6 +281,12 @@ class SiteGroupsController
     {
         AuthGuard::require();
 
+        if (!CSRF::validate($_POST['_csrf'] ?? '')) {
+            Session::set('flash_error', 'Недійсний токен безпеки. Спробуйте ще раз.');
+            header('Location: /site-groups');
+            exit;
+        }
+
         $id      = (int) ($params['id'] ?? 0);
         $name    = trim((string) ($_POST['name']     ?? ''));
         $url     = trim((string) ($_POST['url']      ?? ''));
@@ -240,6 +294,12 @@ class SiteGroupsController
 
         if ($id <= 0 || $name === '' || $url === '' || $groupId <= 0) {
             Session::set('flash_error', 'Невірні дані для оновлення сайту.');
+            header('Location: /site-groups');
+            exit;
+        }
+
+        if (strlen($name) > 150) {
+            Session::set('flash_error', 'Назва сайту не може перевищувати 150 символів.');
             header('Location: /site-groups');
             exit;
         }
@@ -269,6 +329,12 @@ class SiteGroupsController
     public function deleteSite(array $params): void
     {
         AuthGuard::require();
+
+        if (!CSRF::validate($_POST['_csrf'] ?? '')) {
+            Session::set('flash_error', 'Недійсний токен безпеки. Спробуйте ще раз.');
+            header('Location: /site-groups');
+            exit;
+        }
 
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
@@ -310,6 +376,12 @@ class SiteGroupsController
             return;
         }
 
+        if (!CSRF::validate((string) ($body['_csrf'] ?? ''))) {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token.']);
+            return;
+        }
+
         $groupId = (int) ($body['group_id'] ?? 0);
 
         if ($id <= 0 || $groupId <= 0) {
@@ -339,7 +411,11 @@ class SiteGroupsController
             return;
         }
 
-        echo json_encode(['status' => 'ok', 'data' => ['site_id' => $id, 'group_id' => $groupId]]);
+        echo json_encode([
+            'status' => 'ok',
+            'data'   => ['site_id' => $id, 'group_id' => $groupId],
+            'csrf'   => CSRF::getToken(),
+        ]);
     }
 
     // ──────────────────────────────────────────────────────────────────────
@@ -409,6 +485,7 @@ HTML;
     {
         $groupId   = (int) $group['id'];
         $groupName = htmlspecialchars((string) $group['name'], ENT_QUOTES, 'UTF-8');
+        $groupDesc = htmlspecialchars((string) ($group['description'] ?? ''), ENT_QUOTES, 'UTF-8');
         $siteCount = count($sites);
 
         $cards    = '';
@@ -431,7 +508,8 @@ HTML;
               <button class="col-menu__item"
                 data-modal-open="modal-edit-group"
                 data-group-id="{$groupId}"
-                data-group-name="{$groupName}">Редагувати групу</button>
+                data-group-name="{$groupName}"
+                data-group-desc="{$groupDesc}">Редагувати групу</button>
               <button class="col-menu__item col-menu__item--danger"
                 data-modal-open="modal-delete-group"
                 data-group-id="{$groupId}"
@@ -533,7 +611,7 @@ HTML;
      *
      * @param list<array<string,mixed>> $groups used for "Edit Site" group select options
      */
-    private static function renderModals(array $groups): string
+    private static function renderModals(array $groups, string $csrfToken): string
     {
         $groupOptions = '';
         foreach ($groups as $g) {
@@ -552,6 +630,7 @@ HTML;
       <button class="modal__close" type="button">&times;</button>
     </div>
     <form method="POST" action="/site-groups/create">
+      <input type="hidden" name="_csrf" value="{$csrfToken}">
       <div class="modal__body">
         <div class="field-group">
           <label class="field-label" for="ng-name">Назва групи *</label>
@@ -578,10 +657,15 @@ HTML;
       <button class="modal__close" type="button">&times;</button>
     </div>
     <form method="POST" action="#" class="js-edit-group-form">
+      <input type="hidden" name="_csrf" value="{$csrfToken}">
       <div class="modal__body">
         <div class="field-group">
           <label class="field-label" for="eg-name">Назва групи *</label>
           <input class="field-input" id="eg-name" name="name" type="text" required autocomplete="off">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="eg-desc">Опис</label>
+          <input class="field-input" id="eg-desc" name="description" type="text" autocomplete="off">
         </div>
       </div>
       <div class="modal__footer">
@@ -600,6 +684,7 @@ HTML;
       <button class="modal__close" type="button">&times;</button>
     </div>
     <form method="POST" action="#" class="js-delete-group-form">
+      <input type="hidden" name="_csrf" value="{$csrfToken}">
       <div class="modal__body">
         <p class="modal__confirm-text">
           Видалити групу &laquo;<strong class="js-group-name"></strong>&raquo;?<br>
@@ -622,6 +707,7 @@ HTML;
       <button class="modal__close" type="button">&times;</button>
     </div>
     <form method="POST" action="/sites/create">
+      <input type="hidden" name="_csrf" value="{$csrfToken}">
       <input type="hidden" name="group_id" value="">
       <div class="modal__body">
         <div class="field-group">
@@ -653,6 +739,7 @@ HTML;
       <button class="modal__close" type="button">&times;</button>
     </div>
     <form method="POST" action="#" class="js-edit-site-form">
+      <input type="hidden" name="_csrf" value="{$csrfToken}">
       <div class="modal__body">
         <div class="field-group">
           <label class="field-label" for="es-name">Назва сайту *</label>
@@ -685,6 +772,7 @@ HTML;
       <button class="modal__close" type="button">&times;</button>
     </div>
     <form method="POST" action="#" class="js-delete-site-form">
+      <input type="hidden" name="_csrf" value="{$csrfToken}">
       <div class="modal__body">
         <p class="modal__confirm-text">
           Видалити сайт &laquo;<strong class="js-site-name"></strong>&raquo;?<br>

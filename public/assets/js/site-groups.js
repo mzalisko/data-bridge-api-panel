@@ -14,6 +14,7 @@ function initModals() {
       // Pre-fill data for group-level triggers (add-site, edit-group, delete-group)
       var groupId   = trigger.dataset.groupId   || '';
       var groupName = trigger.dataset.groupName || '';
+      var groupDesc = trigger.dataset.groupDesc || '';
       var siteId    = trigger.dataset.siteId    || '';
       var siteName  = trigger.dataset.siteName  || '';
       var siteUrl   = trigger.dataset.siteUrl   || '';
@@ -28,12 +29,14 @@ function initModals() {
         apiKeyInput.value = generateKey();
       }
 
-      // "Edit group" modal — set form action + pre-fill name
+      // "Edit group" modal — set form action + pre-fill name + description
       var editGroupForm = overlay.querySelector('.js-edit-group-form');
       if (editGroupForm) {
         editGroupForm.action = '/site-groups/' + groupId + '/update';
         var nameInput = editGroupForm.querySelector('[name="name"]');
         if (nameInput) nameInput.value = groupName;
+        var descInput = editGroupForm.querySelector('[name="description"]');
+        if (descInput) descInput.value = groupDesc;
       }
 
       // "Delete group" modal — set form action + group name in text
@@ -204,14 +207,27 @@ function initDragDrop() {
       }
 
       // AJAX persist
+      var csrfMeta = document.getElementById('csrf-token');
+      var csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+
       fetch('/api/v1/sites/' + siteId + '/move', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ group_id: parseInt(groupId, 10) }),
+        body: JSON.stringify({ group_id: parseInt(groupId, 10), _csrf: csrfToken }),
       }).then(function (res) {
         if (!res.ok) {
           // Reload on failure to restore correct state
           window.location.reload();
+          return;
+        }
+        return res.json();
+      }).then(function (data) {
+        if (data && data.csrf) {
+          // Update CSRF token for subsequent form submissions
+          if (csrfMeta) csrfMeta.setAttribute('content', data.csrf);
+          document.querySelectorAll('input[name="_csrf"]').forEach(function (el) {
+            el.value = data.csrf;
+          });
         }
       }).catch(function () {
         window.location.reload();
