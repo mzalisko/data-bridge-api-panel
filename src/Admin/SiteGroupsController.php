@@ -103,12 +103,17 @@ class SiteGroupsController
             header('Location: /site-groups');
             exit;
         }
-        $pdo    = Database::getInstance()->getConnection();
+        $pdo = Database::getInstance()->getConnection();
 
-        $stmt = $pdo->prepare(
-            'INSERT INTO site_groups (name, description, created_by) VALUES (?, ?, ?)'
-        );
-        $stmt->execute([$name, $desc ?: null, $userId]);
+        try {
+            $stmt = $pdo->prepare(
+                'INSERT INTO site_groups (name, description, created_by) VALUES (?, ?, ?)'
+            );
+            $stmt->execute([$name, $desc ?: null, $userId]);
+        } catch (PDOException $e) {
+            error_log('SiteGroupsController::createGroup — ' . $e->getMessage());
+            Session::set('flash_error', 'Помилка при створенні групи.');
+        }
 
         header('Location: /site-groups');
         exit;
