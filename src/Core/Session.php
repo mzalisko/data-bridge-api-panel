@@ -88,6 +88,16 @@ class Session
     }
 
     /**
+     * Remove a single session key.
+     * Alias kept minimal — for flash message cleanup, etc.
+     */
+    public static function forget(string $key): void
+    {
+        self::start();
+        unset($_SESSION[$key]);
+    }
+
+    /**
      * Check whether a session key exists.
      */
     public static function has(string $key): bool

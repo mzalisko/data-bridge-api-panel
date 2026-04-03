@@ -43,9 +43,12 @@ class Layout
         string $ctaLabel = '',
         string $ctaHref = '#'
     ): void {
-        $userName  = htmlspecialchars((string) Session::get('user_name', 'User'), ENT_QUOTES, 'UTF-8');
-        $userRole  = htmlspecialchars((string) Session::get('user_role', ''), ENT_QUOTES, 'UTF-8');
-        $userInit  = mb_strtoupper(mb_substr($userName, 0, 2));
+        $rawName   = (string) Session::get('user_name', 'User');
+        $rawRole   = (string) Session::get('user_role', '');
+        $userName  = htmlspecialchars($rawName, ENT_QUOTES, 'UTF-8');
+        $userRole  = htmlspecialchars($rawRole, ENT_QUOTES, 'UTF-8');
+        $userInit  = htmlspecialchars(mb_strtoupper(mb_substr($rawName, 0, 2)), ENT_QUOTES, 'UTF-8');
+        $userInit  = $userInit ?: 'U';
         $titleSafe = htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8');
         $ctaSafe   = htmlspecialchars($ctaLabel, ENT_QUOTES, 'UTF-8');
         $ctaHrefS  = htmlspecialchars($ctaHref, ENT_QUOTES, 'UTF-8');
@@ -173,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+<script src="/assets/js/site-groups.js"></script>
 </body>
 </html>
 HTML;
