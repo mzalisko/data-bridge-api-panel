@@ -128,9 +128,14 @@ class SiteGroupsController
             exit;
         }
 
-        $pdo  = Database::getInstance()->getConnection();
-        $stmt = $pdo->prepare('UPDATE site_groups SET name = ? WHERE id = ?');
-        $stmt->execute([$name, $id]);
+        $pdo = Database::getInstance()->getConnection();
+        try {
+            $stmt = $pdo->prepare('UPDATE site_groups SET name = ? WHERE id = ?');
+            $stmt->execute([$name, $id]);
+        } catch (PDOException $e) {
+            error_log('SiteGroupsController::updateGroup — ' . $e->getMessage());
+            Session::set('flash_error', 'Помилка при оновленні групи.');
+        }
 
         header('Location: /site-groups');
         exit;
@@ -152,8 +157,9 @@ class SiteGroupsController
         try {
             $stmt = $pdo->prepare('DELETE FROM site_groups WHERE id = ?');
             $stmt->execute([$id]);
-        } catch (PDOException) {
+        } catch (PDOException $e) {
             // FK RESTRICT: sites still belong to this group
+            error_log('SiteGroupsController::deleteGroup — ' . $e->getMessage());
             Session::set('flash_error', 'Неможливо видалити групу: спочатку видаліть або перемістіть її сайти.');
         }
 
@@ -207,8 +213,9 @@ class SiteGroupsController
             $stmt->execute([$siteId, $apiKey]);
 
             $pdo->commit();
-        } catch (PDOException) {
+        } catch (PDOException $e) {
             $pdo->rollBack();
+            error_log('SiteGroupsController::createSite — ' . $e->getMessage());
             Session::set('flash_error', 'Помилка при створенні сайту.');
         }
 
@@ -244,7 +251,8 @@ class SiteGroupsController
                 'UPDATE sites SET name = ?, url = ?, group_id = ? WHERE id = ?'
             );
             $stmt->execute([$name, $url, $groupId, $id]);
-        } catch (\PDOException) {
+        } catch (PDOException $e) {
+            error_log('SiteGroupsController::updateSite — ' . $e->getMessage());
             Session::set('flash_error', 'Помилка при оновленні сайту.');
         }
 
@@ -263,10 +271,15 @@ class SiteGroupsController
             exit;
         }
 
-        $pdo  = Database::getInstance()->getConnection();
-        $stmt = $pdo->prepare('DELETE FROM sites WHERE id = ?');
-        $stmt->execute([$id]);
-        // api_keys cascade-deletes automatically (ON DELETE CASCADE)
+        $pdo = Database::getInstance()->getConnection();
+        try {
+            $stmt = $pdo->prepare('DELETE FROM sites WHERE id = ?');
+            $stmt->execute([$id]);
+            // api_keys cascade-deletes automatically (ON DELETE CASCADE)
+        } catch (PDOException $e) {
+            error_log('SiteGroupsController::deleteSite — ' . $e->getMessage());
+            Session::set('flash_error', 'Помилка при видаленні сайту.');
+        }
 
         header('Location: /site-groups');
         exit;
@@ -311,8 +324,15 @@ class SiteGroupsController
             return;
         }
 
-        $stmt = $pdo->prepare('UPDATE sites SET group_id = ? WHERE id = ?');
-        $stmt->execute([$groupId, $id]);
+        try {
+            $stmt = $pdo->prepare('UPDATE sites SET group_id = ? WHERE id = ?');
+            $stmt->execute([$groupId, $id]);
+        } catch (PDOException $e) {
+            error_log('SiteGroupsController::moveSite — ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Помилка при переміщенні сайту.']);
+            return;
+        }
 
         echo json_encode(['status' => 'ok', 'data' => ['site_id' => $id, 'group_id' => $groupId]]);
     }
