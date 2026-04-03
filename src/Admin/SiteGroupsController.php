@@ -42,6 +42,7 @@ class SiteGroupsController
             echo self::renderToolbar(0, 0);
             echo self::renderKanbanBoard([], []);
             echo self::renderModals([]);
+            echo '<script src="/assets/js/site-groups.js"></script>';
             Layout::end();
             return;
         }
@@ -75,6 +76,7 @@ class SiteGroupsController
         echo self::renderToolbar(count($groups), $totalSites);
         echo self::renderKanbanBoard($groups, $sitesByGroup);
         echo self::renderModals($groups);
+        echo '<script src="/assets/js/site-groups.js"></script>';
         Layout::end();
     }
 
@@ -95,7 +97,12 @@ class SiteGroupsController
             exit;
         }
 
-        $userId = (int) Session::get('user_id', 1);
+        $userId = (int) Session::get('user_id');
+        if ($userId <= 0) {
+            Session::set('flash_error', 'Сесія недійсна. Увійдіть знову.');
+            header('Location: /site-groups');
+            exit;
+        }
         $pdo    = Database::getInstance()->getConnection();
 
         $stmt = $pdo->prepare(
@@ -231,11 +238,15 @@ class SiteGroupsController
             exit;
         }
 
-        $pdo  = Database::getInstance()->getConnection();
-        $stmt = $pdo->prepare(
-            'UPDATE sites SET name = ?, url = ?, group_id = ? WHERE id = ?'
-        );
-        $stmt->execute([$name, $url, $groupId, $id]);
+        $pdo = Database::getInstance()->getConnection();
+        try {
+            $stmt = $pdo->prepare(
+                'UPDATE sites SET name = ?, url = ?, group_id = ? WHERE id = ?'
+            );
+            $stmt->execute([$name, $url, $groupId, $id]);
+        } catch (\PDOException) {
+            Session::set('flash_error', 'Помилка при оновленні сайту.');
+        }
 
         header('Location: /site-groups');
         exit;
@@ -440,6 +451,9 @@ HTML;
         } else {
             $conn = 'ok';
         }
+
+        $allowedConn = ['ok', 'pause', 'off'];
+        $conn = in_array($conn, $allowedConn, true) ? $conn : 'off';
 
         $connLabels = ['ok' => 'Підключений', 'pause' => 'На паузі', 'off' => 'Відключений'];
         $badgeLabel = htmlspecialchars($connLabels[$conn], ENT_QUOTES, 'UTF-8');

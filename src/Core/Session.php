@@ -93,7 +93,7 @@ class Session
      */
     public static function forget(string $key): void
     {
-        self::start();
+        static::assertStarted();
         unset($_SESSION[$key]);
     }
 

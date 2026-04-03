@@ -176,7 +176,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-<script src="/assets/js/site-groups.js"></script>
 </body>
 </html>
 HTML;
