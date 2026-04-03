@@ -37,6 +37,31 @@ $router->post('/login', [\App\Auth\LoginController::class, 'handleLogin']);
 $router->get('/logout', [\App\Auth\LoginController::class, 'logout']);
 
 // -------------------------------------------------------------------------
+// Admin routes
+// -------------------------------------------------------------------------
+
+$router->get('/dashboard', [\App\Admin\DashboardController::class, 'index']);
+
+// -------------------------------------------------------------------------
+// Site Groups routes
+// -------------------------------------------------------------------------
+
+$router->get('/site-groups', [\App\Admin\SiteGroupsController::class, 'index']);
+
+// Group CRUD
+$router->post('/site-groups/create',      [\App\Admin\SiteGroupsController::class, 'createGroup']);
+$router->post('/site-groups/{id}/update', [\App\Admin\SiteGroupsController::class, 'updateGroup']);
+$router->post('/site-groups/{id}/delete', [\App\Admin\SiteGroupsController::class, 'deleteGroup']);
+
+// Site CRUD
+$router->post('/sites/create',            [\App\Admin\SiteGroupsController::class, 'createSite']);
+$router->post('/sites/{id}/update',       [\App\Admin\SiteGroupsController::class, 'updateSite']);
+$router->post('/sites/{id}/delete',       [\App\Admin\SiteGroupsController::class, 'deleteSite']);
+
+// Drag & drop AJAX
+$router->post('/api/v1/sites/{id}/move',  [\App\Admin\SiteGroupsController::class, 'moveSite']);
+
+// -------------------------------------------------------------------------
 // Root redirect
 // -------------------------------------------------------------------------
 
